@@ -16,7 +16,7 @@ function NavbarItemDropDown() {
         {isOpen && (
         <div className="dropdown-menu show">
             {["ROLE_ADMIN", "ROLE_MANAGER"].some(role => userRoles?.includes(role)) &&  <Link className="dropdown-item" to="/userlist" onClick={() => setIsOpen(false)}>Listar usuários</Link>}
-            <a className="dropdown-item" href="#" onClick={() => setIsOpen(false)}>Listar livros</a>
+            <Link className="dropdown-item" to="/home" onClick={() => setIsOpen(false)}>Listar livros</Link>
         </div>
         )}
     </li>

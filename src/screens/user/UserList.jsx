@@ -2,76 +2,137 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Message from "../../components/Message";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../api";
+import 'bootswatch/dist/darkly/bootstrap.min.css';
+import Pagination from "@mui/material/Pagination";
+import { toast } from "react-toastify";
 
 function UserList() {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName : "",
+    size: 10
+  });
 
-  const token = localStorage.getItem("token"); // Recupera o token do localStorage
   const [users, setUsers] = useState([]); // Estado para armazenar os usuários
-  const [loading, setLoading] = useState(true); // Estado para exibir "Carregando..."
-  const [error, setError] = useState(null); // Estado para capturar erros
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0); // Estado para armazenar o total de páginas
 
-  const [message, setMessage] = useState(""); // Estado para exibir a notificação
+  const handleChange = (e) => {
+     setFormData({ 
+        ...formData, 
+        [e.target.name]: e.target.value });
+  };
 
-  //O useEffect() garante que a requisição aconteça apenas uma vez (quando o componente for montado)
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    loadUsers();
+    console.log("Pesquisa enviada:", formData);
+  };
+
   useEffect(() => {
-    axios.get("http://localhost:8080/api/user/list", 
+     setFormData({ 
+        ...formData, 
+        "page": page });
+    loadUsers();
+  }, [page]);
+
+  const loadUsers = () => {
+    api().get("/api/user/page/filter", 
+      {params: {
+        firstName: formData.firstName || null,  
+        lastName: formData.lastName || null,
+        page: page,
+        size: formData.size
+      }},
       {
         headers: {
           Authorization: `Bearer ${token}` // Envia o token no cabeçalho
         }
       })
       .then(response => {
-        setUsers(response.data); // Atualiza a lista de usuários
-        setLoading(false);
+        console.log(response.data);
+        setUsers(response.data.content); // Atualiza a lista de usuários
+        setTotalPages(response.data.totalPages);
       })
       .catch(error => {
-        setError("Erro ao carregar usuários! ");
+        toast.error("Erro no carregamento dos dados.");
         console.log(error);
-        setLoading(false);
       });
-  }, []); // O array vazio faz a requisição rodar apenas 1 vez
-  
-
-  if (loading) return <p>Carregando usuários...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  }
 
   const handleEditUser = (id) => {
     navigate(`/edituser/${id}`);
   }
 
   const handleDeleteUser = (id) => {
-    axios.delete(`http://localhost:8080/api/user/delete/${id}`)
+    api().delete(`api/user/delete/${id}`)
       .then(() => {
         // Atualiza a lista após remoção
         setUsers(users.filter(user => user.id !== id));
 
         // Exibe a mensagem de sucesso
-        setMessage("Usuário removido com sucesso!");
-
-        // Remove a mensagem após 3 segundos
-        setTimeout(() => setMessage(""), 3000);
+        toast.success("Usuário removido com sucesso!");
       })
-      .catch(error => console.error("Erro ao excluir usuário:", error));
+      .catch(error => 
+        toast.error("Erro ao excluir usuário")
+      );
   }
+
+
+
+
+
+
+
+  const token = localStorage.getItem("token"); // Recupera o token do localStorage
+  const [loading, setLoading] = useState(true); // Estado para exibir "Carregando..."
+  const [error, setError] = useState(null); // Estado para capturar erros
+
+  const [message, setMessage] = useState(""); // Estado para exibir a notificação
+
+
+
+
+
 
   return (
     <div>
+      <h4>Pesquisa:</h4>
+      <div style={{marginTop: 30}}>
+      <form onSubmit={handleSubmit} className="p-4 bg-dark border rounded">
+        <label htmlFor="idfirstName">Nome: </label>
+        <input
+            id="idfirstName"
+            name="firstName"
+            type="text"
+            value={formData.firstName}
+            onChange={handleChange}
+            placeholder="Nome"
+        />
 
-      {/* Notificação de sucesso  */}
-      {message && (
-        <div className="alert">
-          {message}
-        </div>
-      )}
-      <Message type="sucess" msg={message}/>
+        <label>Sobrenome: </label>
+        <input
+            id="idlastName"
+            name="lastName"
+            type="text"
+            value={formData.lastName}
+            onChange={handleChange}
+            placeholder="Sobrenome"
+            />
+        <button className="btn btn-primary btn-sm" type="submit">Pesquisar</button>
+      </form>
+      </div>
+     
       <h2>Lista de Usuários</h2>
       <table className="table table-hover">
         <thead>
           <tr>
             <th scope="col">Id</th>
             <th scope="col">Nome</th>
-            <th scope="col">Email</th>
+            <th scope="col">Login</th>
+            <th scope="col">Status</th>
             <th scope="col">Comandos</th>
           </tr>
         </thead>
@@ -81,7 +142,8 @@ function UserList() {
               <tr className="table-active" key={user.id}>
                 <td>{user.id}</td>
                 <td>{user.firstName} {user.lastName}</td>
-                <td>{user.email}</td>
+                <td>{user.login}</td>
+                <td>{user.status}</td>
                 <td>
                   <button 
                     type="button" 
@@ -100,6 +162,18 @@ function UserList() {
           }
         </tbody>
       </table>
+
+      {/*Paginação */}
+      <div className="center">
+        <div style={{ backgroundColor: 'white', width: 'fit-content'}}>
+          <Pagination 
+            count={totalPages} 
+            variant="outlined" 
+            shape="primary"
+            onChange={(e, value) => setPage(value - 1)}
+            />
+        </div>
+      </div>
     </div>
   );
 }

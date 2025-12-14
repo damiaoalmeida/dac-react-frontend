@@ -1,6 +1,6 @@
 import FormInput from "../../components/FormInput";
 import { useState } from "react";
-import { useNavigate} from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import '../../App.css';
 
@@ -66,9 +66,13 @@ function Login() {
           placeholder="Digite sua senha">
         </FormInput>
         <div>
-          {/* <button className="btn btn-primary" onClick={() => navigate("/home")}>Entrar</button> */}
           <button className="btn btn-primary" type="submit">Entrar</button>
-          <button className="btn btn-secondary" onClick={() => navigate("/createuser", {state:{hideNavbar:true}})}>Cadastrar</button>
+          <br/>
+          <Link to="/createuser">Novo usuário</Link>
+          {/* <button className="btn btn-outline-primary" onClick={() => navigate("/createuser", {state:{hideNavbar:true}})}>Cadastrar</button> */}
+          {/* <a href="/createuser">Novo usuário</a> */}
+
+          {/* <button className="btn btn-primary" onClick={() => navigate("/home")}>Entrar</button> */}
         </div>
       </form>
     </div>

@@ -30,7 +30,7 @@ const Navbar = () => {
             <div className="collapse navbar-collapse" id="navbarColor01">
                 <ul className="navbar-nav me-auto">
                     {/* HOME */} <NavbarItem href="/home" label="Home"/> 
-                    {/* CADASTRO*/} {["ROLE_ADMIN", "ROLE_MANAGER"].some(role => userRoles?.includes(role)) && <NavbarItem href="/createUser" label="Cadastro"/>}
+                    {/* CADASTRO*/} {["ROLE_ADMIN", "ROLE_MANAGER"].some(role => userRoles?.includes(role)) && <NavbarItem href="/createUserMain" label="Cadastro"/>}
                     {/* LISTAR */} <NavbarItemDropDown />
 
                     <li className="nav-item">

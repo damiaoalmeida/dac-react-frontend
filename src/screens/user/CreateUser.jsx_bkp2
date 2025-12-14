@@ -1,0 +1,234 @@
+import {useState } from "react";
+import 'bootswatch/dist/darkly/bootstrap.min.css';
+import '../../App.css'
+
+function CreateUser() {
+
+  //suponha que as permissões vieram do backend
+  const allRoles = [
+    {id:"1", role:"Administrador"},
+    {id:"2", role:"Diretor"},
+    {id:"3", role:"Coordenador"},
+    {id:"4", role:"Professor"},
+    {id:"5", role:"Aluno"}]
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName : "",
+    login: "",
+    password: "",
+    password2: "",
+    gender: "",
+    dateOfBirth : "",
+    statusConta: "Ativo",
+    roles: []
+  });
+
+  const [foto, setFoto] = useState(null);
+  const [preview, setPreview] = useState(null);
+
+  const handleSubmit =  (e) => {
+    e.preventDefault();
+
+    if(formData.password != formData.password2){
+      alert("As senhas não conferem!")
+      return;
+    }
+
+    //TODO chamar o backend aqui
+    console.log(formData);
+  }
+
+  const handleChange = (e) => {
+     setFormData({ 
+        ...formData, 
+        [e.target.name]: e.target.value });
+  };
+
+  const handleRoleChange = (e) => {
+      const id = e.target.value;
+
+      if(formData.roles.includes(id)) {
+        // se já tiver no array, remove
+        setFormData({ 
+          ...formData, 
+          ['roles']: formData.roles.filter((r) => r !== id) })
+      } else {
+          setFormData({ 
+            ...formData, 
+            ['roles']: [...formData.roles, id] })
+      }
+  }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFoto(file);
+    setPreview(URL.createObjectURL(file)); // preview da imagem
+  };
+
+  return (
+    <>
+      <div className="center">
+        <form onSubmit={handleSubmit} className="p-4 bg-dark border rounded">
+          <legend>Cadastro de Usuário</legend>
+
+          <label htmlFor="idfirstName">Nome* </label>
+          <input
+                    id="idfirstName"
+                    name="firstName"
+                    type="text"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    placeholder="Seu nome"
+                    className="form-control mb-2" 
+                    required={true}
+                    />
+
+          <label>Sobrenome* </label>
+          <input
+                    id="idlastName"
+                    name="lastName"
+                    type="text"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    placeholder="Seu sobrenome"
+                    className="form-control mb-2"
+                    required={true}
+                    />
+          
+          <label>Login* </label>
+          <input
+                    id="idlogin"
+                    name="login"
+                    type="text"
+                    value={formData.login}
+                    onChange={handleChange}
+                    placeholder="Seu email"
+                    className="form-control mb-2"
+                    required={true}
+                    />
+
+          <label htmlFor="idpassword">Senha* </label>
+          <input
+                    id="idpassword"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="form-control mb-2" 
+                    required={true}
+                    />
+
+          <label htmlFor="idpassword2">Re-Senha* </label>
+          <input
+                    id="idpassword2"
+                    name="password2"
+                    type="password"
+                    value={formData.password2}
+                    onChange={handleChange}
+                    className="form-control mb-2" 
+                    required={true}
+                    />
+          
+          <label htmlFor="idgender1">Gênero* </label>
+          <div className="container_grid">
+            <input 
+              type="radio" 
+              name="gender" 
+              id="idgender1" 
+              value="MALE" 
+              onChange={handleChange}
+              className="form-check-input"
+              checked={formData.gender === 'MALE'}/>
+            Masculino
+
+            <input 
+              type="radio" 
+              name="gender" 
+              id="idgender2" 
+              value="FEMALE" 
+              onChange={handleChange}
+              className="form-check-input"
+              checked={formData.gender === 'FEMALE'}/>
+            Feminino
+
+            <input 
+              type="radio" 
+              name="gender" 
+              id="idgender3" 
+              value="OTHER" 
+              onChange={handleChange}
+              className="form-check-input"
+              checked={formData.gender === 'OTHER'}/>
+            Outro
+
+            <input 
+              type="radio" 
+              name="gender" 
+              id="idgender4" 
+              value="NOT_SPECIFY" 
+              onChange={handleChange}
+              className="form-check-input"
+              checked={formData.gender === 'NOT_SPECIFY'}/>
+            Não lhe interessa
+          </div>
+
+          <label htmlFor="iddateOfBirth">Data de nascimento* </label>
+          <div>
+            <input
+                    id="iddateOfBirth"
+                    name="dateOfBirth"
+                    type="date"
+                    value={formData.dateOfBirth}
+                    onChange={handleChange}
+                    required={true}
+                    />
+          </div>
+
+          <label htmlFor="statusConta" className="form-label mt-4">Status:</label>
+          <select className="form-select" id="idstatusConta" name="statusConta" onChange={handleChange}>
+            <option value='Ativo' defaultChecked>Ativo</option>
+            <option value='Inativo'>Inativo</option>
+            <option value='Bloqueado'>Bloqueado</option>
+            <option value='Pendente'>Pendente</option>
+          </select>
+
+          <label className="mt-4">Permissões</label>
+          <div className="container_grid_4">
+
+             {allRoles.map((r) => (
+                <div key={r.id}>
+                  <input
+                    type="checkbox"
+                    value={r.id}
+                    checked={formData.roles.includes(r.id)}
+                    onChange={handleRoleChange}
+                  />
+                  <label style={{padding: '5px'}}> {r.role}</label>
+                </div>
+                )
+             )}
+          </div>
+
+          <label>Foto do usuário:</label>
+          <input
+            className="form-control"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+          {preview && (
+            <div className="mb-2">
+              <img src={preview} alt="Preview" width="120" className="rounded" />
+            </div>
+          )}
+
+          <button className="btn btn-primary  mt-2" type="submit">Salvar</button>
+        </form>
+      </div>
+    </>
+
+  );
+}
+
+export default CreateUser;

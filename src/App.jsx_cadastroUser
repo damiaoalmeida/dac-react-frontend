@@ -1,0 +1,10 @@
+import CreateUser from "./screens/user/CreateUser";
+import EditUser from "./screens/user/EditUser";
+
+function App() {
+    return (
+        <EditUser/>
+    )
+}
+
+export default App;

@@ -1,22 +1,38 @@
-import axios from "axios";
-import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import FormUser from "./FormUser";
+import {useNavigate} from "react-router-dom";
 
-function EditUser() {
+function UserEdit() {
 
-    const { id } = useParams(); // Captura o ID da URL
     const navigate = useNavigate();
 
-    // Carregar dados do usuário ao montar
-    useEffect(() => {
-        axios.get(`http://localhost:8080/api/user/get/${id}`)
-        .then((response) => {
-            response.data.confirmarSenha = response.data.password;
-            console.log(response.data);
-            navigate(`/createUser`, { state: { userData: response.data } }); // Passa JSON
-        })
-        .catch(() => alert("Erro ao carregar usuário!", "error"));
-    }, [id]);
-};
+    //Vamos supor que este usuário veio do backend
+    const user = {
+        firstName: "Fulano",
+        lastName : "da Silva",
+        login: "fulano@ifpb.com",
+        password: "",
+        password2: "",
+        gender: "NOT_SPECIFY",
+        dateOfBirth : "2020-04-02",
+        statusConta: "Ativo",
+        roles: ["1", "3"]
+    };
 
-export default EditUser;
+  const handleEdit = (data) => {
+    console.log('Editando usuario: ');
+    console.log(data);
+  };
+
+  const handleCancel = () => {
+    navigate(`/userlist`);
+  }
+
+  return (
+    <div>
+      <h3>Editar Usuário</h3>
+      <FormUser userData={user} onSubmit={handleEdit} onCancel={handleCancel}/>
+    </div>
+  );
+}
+
+export default UserEdit;

@@ -7,10 +7,13 @@ import Navbar from './components/Navbar';
 import AppRoutes from './routes/AppRoutes';
 import AppContext from './experiments/context/AppContext';
 import { AuthProvider } from './context/AuthContext';
+import { ToastContainer } from 'react-toastify';
+import ExLocalStorage from './experiments/ExLocalStorage';
 
 function App() {
     return (
         <AuthProvider>
+            <ToastContainer />
             <AppRoutes/>
         </AuthProvider>
     )
@@ -21,9 +24,10 @@ export default App;
 
 // function App() {
 //     return (
-//         <LocalStorage/>
+//         <ExLocalStorage/>
 //     )
 // }
+// export default App;
 
 // function App() {
 //     return (

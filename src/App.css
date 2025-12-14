@@ -54,3 +54,28 @@
     box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
     z-index: 9999
 }
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Garante que o conteúdo do formulário fique alinhado à esquerda */
+.center form {
+  text-align: left;
+  width: 700px; /* opcional, para dar largura */
+  max-width: 90%;
+}
+
+.container_grid {
+  display: grid;
+  grid-template-columns: 20px auto;
+  padding: 10px;
+}
+
+.container_grid_4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 10px;
+}
